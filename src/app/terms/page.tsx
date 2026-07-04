@@ -57,11 +57,34 @@ export default function TermsPage() {
 
         <section>
           <h2 className="mb-1 font-medium text-headline">Ownership and delivery</h2>
-          <div className="rounded-lg border border-dashed border-accent-text bg-accent-tint p-4 text-[13px] text-accent-text">
-            Pending legal review — site file ownership, payment, and hosting
-            handoff terms go here before this page is used with real
-            customers.
-          </div>
+          <p className="mb-3">
+            <strong className="text-headline">Domain.</strong> You own and
+            are responsible for purchasing your own domain name. We&apos;ll
+            connect it to your site during launch, but the domain itself is
+            yours from day one.
+          </p>
+          <p className="mb-3">
+            <strong className="text-headline">Hosting.</strong> Your site is
+            hosted on our Netlify infrastructure at no ongoing hosting fee.
+            This keeps things simple, but it also means hosting isn&apos;t
+            something you can move to a different provider without a
+            separate conversation — if you&apos;d like your own hosting
+            account instead, let us know before the build starts.
+          </p>
+          <p className="mb-3">
+            <strong className="text-headline">Site code.</strong> Once your
+            final balance is paid, the completed site is yours to keep live
+            and in use. Source code handoff (a copy of the project
+            repository) is available on request.
+          </p>
+          <p>
+            <strong className="text-headline">Final payment.</strong> Your
+            site will not be published live until the balance at launch is
+            paid in full. Your draft remains visible to you for review and
+            revision during the build, but it stays unpublished until
+            payment clears. Drafts are held for 30 days; after that we may
+            archive the project.
+          </p>
         </section>
 
         <p className="text-[12px] text-muted">
