@@ -8,7 +8,12 @@ import { useAuth } from "@/lib/auth-context";
 import StatusTracker from "@/components/StatusTracker";
 import { ExternalLinkIcon, InfoIcon } from "@/components/icons";
 import { approveOrder, requestRevision, type Order } from "@/lib/orders";
-import { TIERS } from "@/lib/offer";
+import { TIERS, type Tier } from "@/lib/offer";
+
+const COMPLETION_LINKS: Record<Tier, string> = {
+  base: process.env.NEXT_PUBLIC_STRIPE_LINK_COMPLETION_BASE || "#",
+  base_plus_portal: process.env.NEXT_PUBLIC_STRIPE_LINK_COMPLETION_PORTAL || "#",
+};
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -187,9 +192,33 @@ export default function DashboardPage() {
       )}
 
       {order.status === "approved" && (
-        <div className="rounded-[14px] border border-border bg-surface p-6 text-[13px] text-body">
-          Your draft is approved — we&apos;re finalizing your site for
-          delivery.
+        <div className="rounded-[14px] border border-border bg-surface p-6">
+          <p className="text-[15px] font-medium text-headline">
+            Your draft is approved
+          </p>
+          <p className="mt-1 text-[12px] text-body">
+            Pay your final balance to complete delivery and go live.
+          </p>
+          <div className="mt-4 flex items-center justify-between rounded-lg bg-panel px-4 py-3">
+            <span className="text-[13px] text-body">Balance due</span>
+            <span className="text-[15px] font-medium text-headline">
+              ${TIERS[order.tier].balance}
+            </span>
+          </div>
+          <a
+            href={COMPLETION_LINKS[order.tier]}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 block rounded-lg bg-accent px-4 py-2.5 text-center text-[13px] font-medium text-white"
+          >
+            Pay final balance
+          </a>
+          {COMPLETION_LINKS[order.tier] === "#" && (
+            <p className="mt-2 text-center text-[11px] text-muted">
+              Dev note: completion Payment Link not configured yet for this
+              tier.
+            </p>
+          )}
         </div>
       )}
 

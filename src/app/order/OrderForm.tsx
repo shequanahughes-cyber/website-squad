@@ -14,10 +14,9 @@ import {
 } from "@/lib/offer";
 import { TERMS_VERSION } from "@/lib/terms";
 
-const PAYMENT_LINKS: Record<Tier, string> = {
-  base: process.env.NEXT_PUBLIC_STRIPE_LINK_BASE || "#",
-  base_plus_portal: process.env.NEXT_PUBLIC_STRIPE_LINK_PORTAL || "#",
-};
+// Same $250 deposit link is used for both tiers - only the completion
+// (balance) payment, collected later on approval, differs by tier.
+const DEPOSIT_LINK = process.env.NEXT_PUBLIC_STRIPE_LINK_DEPOSIT || "#";
 
 export default function OrderForm() {
   const searchParams = useSearchParams();
@@ -28,7 +27,7 @@ export default function OrderForm() {
   const [wantsMaintenance, setWantsMaintenance] = useState(false);
 
   const selected = TIERS[tier];
-  const paymentLinkConfigured = PAYMENT_LINKS[tier] !== "#";
+  const paymentLinkConfigured = DEPOSIT_LINK !== "#";
 
   function handleCheckout() {
     if (!agreed) return;
@@ -42,7 +41,7 @@ export default function OrderForm() {
         wantsMaintenance,
       })
     );
-    window.location.href = PAYMENT_LINKS[tier];
+    window.location.href = DEPOSIT_LINK;
   }
 
   return (
@@ -190,9 +189,8 @@ export default function OrderForm() {
             </button>
             {!paymentLinkConfigured && (
               <p className="mt-2 text-center text-[11px] text-muted">
-                Dev note: Stripe Payment Link not configured yet for this
-                tier (set NEXT_PUBLIC_STRIPE_LINK_
-                {tier === "base" ? "BASE" : "PORTAL"} in .env.local).
+                Dev note: Stripe Payment Link not configured yet (set
+                NEXT_PUBLIC_STRIPE_LINK_DEPOSIT in .env.local).
               </p>
             )}
             <p className="mt-3 text-center text-[11px] text-muted">
