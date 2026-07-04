@@ -1,65 +1,98 @@
-import Image from "next/image";
+import Link from "next/link";
+import Checklist from "@/components/Checklist";
+import { TIERS } from "@/lib/offer";
+
+const STEPS = [
+  { title: "Order placed", description: "Pick your tier and pay your deposit." },
+  { title: "Intake submitted", description: "Tell us about your brand and pages." },
+  { title: "We build", description: "Your site takes shape, human-reviewed at every step." },
+  { title: "Draft review", description: "See your first draft, approve it or request your one revision." },
+  { title: "Delivered", description: "Your site goes live on your domain." },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="mx-auto max-w-5xl px-6 py-16">
+      <p className="eyebrow mb-2">The complete build</p>
+      <h1 className="max-w-xl font-serif text-4xl leading-tight text-headline">
+        Your custom website, built by hand
+      </h1>
+      <p className="mt-4 max-w-lg text-[15px] leading-relaxed text-body">
+        A hand-designed multi-page site around your brand, built with
+        AI-assisted development and reviewed by a human at every step.
+      </p>
+      <div className="mt-8 flex gap-3">
+        <Link
+          href="/order"
+          className="rounded-lg bg-accent px-6 py-3 text-sm font-medium text-white hover:opacity-90"
+        >
+          Start your order
+        </Link>
+        <Link
+          href="/terms"
+          className="rounded-lg border border-border bg-surface px-6 py-3 text-sm font-medium text-headline hover:bg-panel"
+        >
+          Read the terms
+        </Link>
+      </div>
+
+      <section className="mt-16">
+        <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.06em] text-headline">
+          What&apos;s included
+        </p>
+        <Checklist />
+      </section>
+
+      <section className="mt-16">
+        <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.06em] text-headline">
+          Choose your build
+        </p>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          {(Object.entries(TIERS) as [keyof typeof TIERS, (typeof TIERS)[keyof typeof TIERS]][]).map(
+            ([key, tier]) => (
+              <div
+                key={key}
+                className="rounded-[14px] border border-border bg-surface p-6"
+              >
+                <p className="font-serif text-lg text-headline">{tier.label}</p>
+                <div className="mt-2 flex items-baseline gap-2">
+                  <span className="text-2xl font-medium text-headline">
+                    ${tier.price}
+                  </span>
+                  <span className="text-[13px] text-muted line-through">
+                    ${tier.listPrice}
+                  </span>
+                </div>
+                <p className="mt-2 text-[13px] text-body">{tier.description}</p>
+                <p className="mt-3 text-[12px] text-muted">
+                  ${tier.deposit} deposit today, ${tier.balance} at launch
+                </p>
+                <Link
+                  href={`/order?tier=${key}`}
+                  className="mt-5 block rounded-lg bg-accent px-4 py-2.5 text-center text-sm font-medium text-white hover:opacity-90"
+                >
+                  Choose this build
+                </Link>
+              </div>
+            )
+          )}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      <section className="mt-16">
+        <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.06em] text-headline">
+          How it works
+        </p>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-5">
+          {STEPS.map((step, i) => (
+            <div key={step.title} className="rounded-xl border border-border bg-surface p-4">
+              <p className="text-[11px] text-muted">Step {i + 1}</p>
+              <p className="mt-1 text-[13px] font-medium text-headline">{step.title}</p>
+              <p className="mt-1 text-[12px] text-body">{step.description}</p>
+            </div>
+          ))}
         </div>
-      </main>
+      </section>
     </div>
   );
 }
