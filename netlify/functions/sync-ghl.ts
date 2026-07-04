@@ -34,7 +34,7 @@ export const handler: Handler = async (event) => {
   }
 
   try {
-    const res = await fetch("https://services.leadconnectorhub.com/contacts/upsert", {
+    const res = await fetch("https://services.leadconnectorhq.com/contacts/upsert", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
