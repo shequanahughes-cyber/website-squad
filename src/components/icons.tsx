@@ -2,6 +2,23 @@ type IconProps = { className?: string };
 
 const base = "1.6";
 
+// fill 0-1 controls how much of the star is filled (for half-star ratings).
+export function StarIcon({ className, fill = 1 }: IconProps & { fill?: number }) {
+  const id = `star-fill-${Math.round(fill * 100)}`;
+  const points = "12,2.5 15,9.2 22.3,9.9 16.8,14.8 18.4,21.9 12,18.2 5.6,21.9 7.2,14.8 1.7,9.9 9,9.2";
+  return (
+    <svg viewBox="0 0 24 24" className={className}>
+      <defs>
+        <linearGradient id={id} x1="0" x2="1" y1="0" y2="0">
+          <stop offset={`${fill * 100}%`} stopColor="currentColor" />
+          <stop offset={`${fill * 100}%`} stopColor="transparent" />
+        </linearGradient>
+      </defs>
+      <polygon points={points} fill={`url(#${id})`} stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function DesktopIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={base} className={className}>

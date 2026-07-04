@@ -31,6 +31,7 @@ export type Order = {
   draftUrl: string | null;
   revisionUsed: boolean;
   revisionNotes: string | null;
+  maintenanceRequested: boolean;
   approvedAt: Timestamp | null;
   deliveredAt: Timestamp | null;
   createdAt: Timestamp | null;
@@ -62,6 +63,7 @@ export async function createOrder(params: {
   price: number;
   termsAcceptedAt: string | null;
   termsVersion: string;
+  maintenanceRequested: boolean;
 }): Promise<string> {
   const db = getFirebaseDb();
   const ref = await addDoc(collection(db, "orders"), {
@@ -76,6 +78,7 @@ export async function createOrder(params: {
     draftUrl: null,
     revisionUsed: false,
     revisionNotes: null,
+    maintenanceRequested: params.maintenanceRequested,
     approvedAt: null,
     deliveredAt: null,
     createdAt: serverTimestamp(),

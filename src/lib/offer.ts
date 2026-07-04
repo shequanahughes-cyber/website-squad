@@ -74,3 +74,18 @@ export const BRANDING_ADD_ON = {
   description: "Custom logo, palette, and typography.",
   price: 150,
 };
+
+export const MAINTENANCE_ADD_ON = {
+  title: "Ongoing hosting and maintenance",
+  description: "Monthly hosting, updates, and support. Optional, cancel anytime.",
+  price: 97,
+  period: "month" as const,
+};
+
+// Real, current figures - do not invent or round these up further.
+export const RATING = 4.5;
+export const TRUST_STATS = [
+  { label: "Years in business", value: "10" },
+  { label: "In sales", value: "$1M+" },
+  { label: "Clients served", value: "Hundreds" },
+] as const;

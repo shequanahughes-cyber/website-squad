@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Checklist from "@/components/Checklist";
+import TrustBand from "@/components/TrustBand";
 import { TIERS } from "@/lib/offer";
 
 const STEPS = [
@@ -34,6 +35,10 @@ export default function Home() {
         >
           Read the terms
         </Link>
+      </div>
+
+      <div className="mt-10">
+        <TrustBand />
       </div>
 
       <section className="mt-16">

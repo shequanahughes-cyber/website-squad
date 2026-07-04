@@ -76,6 +76,7 @@ export default function IntakeForm() {
     const price: number = pending?.price ?? TIERS[tier].price;
     const termsAcceptedAt: string | null = pending?.termsAcceptedAt ?? null;
     const termsVersion: string = pending?.termsVersion ?? TERMS_VERSION;
+    const maintenanceRequested: boolean = pending?.wantsMaintenance ?? false;
 
     createOrder({
       clientUid: user.uid,
@@ -84,6 +85,7 @@ export default function IntakeForm() {
       price,
       termsAcceptedAt,
       termsVersion,
+      maintenanceRequested,
     })
       .then((id) => {
         sessionStorage.setItem(ACTIVE_ORDER_KEY, id);

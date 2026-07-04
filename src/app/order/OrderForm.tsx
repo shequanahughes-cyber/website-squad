@@ -3,8 +3,15 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Checklist from "@/components/Checklist";
+import TrustBand from "@/components/TrustBand";
 import { ClockIcon } from "@/components/icons";
-import { PORTAL_ADD_ON, BRANDING_ADD_ON, TIERS, type Tier } from "@/lib/offer";
+import {
+  PORTAL_ADD_ON,
+  BRANDING_ADD_ON,
+  MAINTENANCE_ADD_ON,
+  TIERS,
+  type Tier,
+} from "@/lib/offer";
 import { TERMS_VERSION } from "@/lib/terms";
 
 const PAYMENT_LINKS: Record<Tier, string> = {
@@ -18,6 +25,7 @@ export default function OrderForm() {
     searchParams.get("tier") === "base_plus_portal" ? "base_plus_portal" : "base";
   const [tier, setTier] = useState<Tier>(initialTier);
   const [agreed, setAgreed] = useState(false);
+  const [wantsMaintenance, setWantsMaintenance] = useState(false);
 
   const selected = TIERS[tier];
   const paymentLinkConfigured = PAYMENT_LINKS[tier] !== "#";
@@ -31,6 +39,7 @@ export default function OrderForm() {
         price: selected.price,
         termsAcceptedAt: new Date().toISOString(),
         termsVersion: TERMS_VERSION,
+        wantsMaintenance,
       })
     );
     window.location.href = PAYMENT_LINKS[tier];
@@ -49,6 +58,10 @@ export default function OrderForm() {
             A hand-designed multi-page site around your brand, built with
             AI-assisted development and reviewed by a human at every step.
           </p>
+
+          <div className="mt-6">
+            <TrustBand />
+          </div>
 
           <p className="mt-8 mb-4 text-[11px] font-medium uppercase tracking-[0.06em] text-headline">
             What&apos;s included
@@ -95,6 +108,25 @@ export default function OrderForm() {
               Want the branding kit too? Mention it on your intake form and
               we&apos;ll follow up with a combined quote.
             </p>
+            <button
+              type="button"
+              onClick={() => setWantsMaintenance((v) => !v)}
+              className={`flex items-center justify-between rounded-[10px] border px-4 py-3 text-left transition-colors ${
+                wantsMaintenance
+                  ? "border-accent bg-accent-tint"
+                  : "border-border bg-surface"
+              }`}
+            >
+              <div>
+                <p className="text-[13px] font-medium text-headline">
+                  {MAINTENANCE_ADD_ON.title}
+                </p>
+                <p className="text-[12px] text-body">{MAINTENANCE_ADD_ON.description}</p>
+              </div>
+              <span className="text-[13px] font-medium text-headline">
+                {wantsMaintenance ? "Added" : `+$${MAINTENANCE_ADD_ON.price}/mo`}
+              </span>
+            </button>
           </div>
         </div>
 
@@ -121,6 +153,14 @@ export default function OrderForm() {
               <span>Balance at launch</span>
               <span className="font-medium text-headline">${selected.balance}</span>
             </div>
+            {wantsMaintenance && (
+              <div className="flex justify-between border-b border-border py-2 text-[13px] text-body">
+                <span>Hosting &amp; maintenance</span>
+                <span className="font-medium text-headline">
+                  ${MAINTENANCE_ADD_ON.price}/mo after launch
+                </span>
+              </div>
+            )}
             <div className="flex items-center gap-1.5 py-3 text-[12px] text-body">
               <ClockIcon className="h-3.5 w-3.5" />
               Delivery in 7 to 10 business days

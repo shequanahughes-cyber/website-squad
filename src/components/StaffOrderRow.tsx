@@ -45,6 +45,13 @@ export default function StaffOrderRow({ order }: { order: Order }) {
     <tr className="border-b border-border align-top">
       <td className="px-3 py-3 text-[13px] text-headline">{order.clientEmail}</td>
       <td className="px-3 py-3 text-[13px] text-body">{order.tier}</td>
+      <td className="px-3 py-3 text-center">
+        {order.maintenanceRequested && (
+          <span className="whitespace-nowrap rounded-full bg-accent-tint px-2.5 py-1 text-[11px] font-medium text-accent-text">
+            Wants maintenance
+          </span>
+        )}
+      </td>
       <td className="px-3 py-3">
         <select
           value={order.status}
