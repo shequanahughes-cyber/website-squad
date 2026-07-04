@@ -1,23 +1,52 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { ChevronLeftIcon, ChevronRightIcon, ExternalLinkIcon } from "@/components/icons";
 import { PORTFOLIO_SITES } from "@/lib/portfolio";
 
+const AUTOPLAY_INTERVAL_MS = 3500;
+
 export default function PortfolioCarousel() {
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const pausedRef = useRef(false);
 
   function scrollByCard(direction: 1 | -1) {
     const el = scrollerRef.current;
     if (!el) return;
     const card = el.querySelector<HTMLElement>("[data-card]");
     const amount = (card?.offsetWidth ?? 320) + 20;
-    el.scrollBy({ left: direction * amount, behavior: "smooth" });
+
+    // Loop back to the start once we've reached the end (and vice versa).
+    const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
+    const atStart = el.scrollLeft <= 4;
+    if (direction === 1 && atEnd) {
+      el.scrollTo({ left: 0, behavior: "smooth" });
+    } else if (direction === -1 && atStart) {
+      el.scrollTo({ left: el.scrollWidth, behavior: "smooth" });
+    } else {
+      el.scrollBy({ left: direction * amount, behavior: "smooth" });
+    }
   }
 
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (prefersReducedMotion) return;
+
+    const id = setInterval(() => {
+      if (!pausedRef.current) scrollByCard(1);
+    }, AUTOPLAY_INTERVAL_MS);
+    return () => clearInterval(id);
+  }, []);
+
   return (
-    <div className="relative">
+    <div
+      className="relative"
+      onMouseEnter={() => (pausedRef.current = true)}
+      onMouseLeave={() => (pausedRef.current = false)}
+    >
       <div
         ref={scrollerRef}
         className="flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
