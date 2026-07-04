@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth-context";
 import { createOrder, submitIntake } from "@/lib/orders";
 import { TIERS, type Tier } from "@/lib/offer";
 import { TERMS_VERSION } from "@/lib/terms";
+import { syncToGhl } from "@/lib/ghl";
 
 const PENDING_ORDER_KEY = "wds_pending_order";
 const ACTIVE_ORDER_KEY = "wds_active_order_id";
@@ -91,6 +92,12 @@ export default function IntakeForm() {
         sessionStorage.setItem(ACTIVE_ORDER_KEY, id);
         sessionStorage.removeItem(PENDING_ORDER_KEY);
         setOrderId(id);
+        syncToGhl({
+          clientEmail: user.email ?? "",
+          clientName: user.displayName ?? "",
+          clientPhone: user.phoneNumber ?? "",
+          tier,
+        });
       })
       .catch((err) => setError(err instanceof Error ? err.message : "Could not start your order."))
       .finally(() => setCreating(false));

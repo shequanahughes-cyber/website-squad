@@ -1,6 +1,9 @@
 [build]
   command = "npm run build"
 
+[functions]
+  directory = "netlify/functions"
+
 [build.environment]
   # NEXT_PUBLIC_* vars are intentionally embedded in the client bundle (Firebase web
   # config and Stripe Payment Link URLs are not secrets - they're meant to be public).
