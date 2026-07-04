@@ -8,6 +8,7 @@ service cloud.firestore {
 
     function isStaff() {
       return isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "staff";
     }
 
@@ -36,11 +37,13 @@ service cloud.firestore {
         (resource.data.clientUid == request.auth.uid || isStaff());
       // Clients may only advance their own order through the exact
       // transitions the dashboard offers - never set arbitrary fields/status.
-      allow update: if isStaff() ||
-        (isSignedIn() && resource.data.clientUid == request.auth.uid &&
+      // Client branch checked first so it short-circuits before isStaff()'s
+      // get() call (isStaff() is only needed for staff editing other orders).
+      allow update: if (isSignedIn() && resource.data.clientUid == request.auth.uid &&
           request.resource.data.diff(resource.data).affectedKeys()
             .hasOnly(["status", "revisionUsed", "revisionNotes", "approvedAt", "updatedAt", "intakeFormData"]) &&
-          validClientStatusTransition());
+          validClientStatusTransition()) ||
+        isStaff();
     }
   }
 }

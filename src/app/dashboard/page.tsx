@@ -2,14 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  collection,
-  limit,
-  onSnapshot,
-  orderBy,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { getFirebaseDb } from "@/lib/firebase";
 import { useAuth } from "@/lib/auth-context";
 import StatusTracker from "@/components/StatusTracker";
@@ -22,6 +15,7 @@ export default function DashboardPage() {
   const { user, loading } = useAuth();
   const [order, setOrder] = useState<Order | null>(null);
   const [ordersLoading, setOrdersLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [revisionNotes, setRevisionNotes] = useState("");
   const [showRevisionBox, setShowRevisionBox] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -33,22 +27,37 @@ export default function DashboardPage() {
       return;
     }
     const db = getFirebaseDb();
-    const q = query(
-      collection(db, "orders"),
-      where("clientUid", "==", user.uid),
-      orderBy("createdAt", "desc"),
-      limit(1)
+    // No orderBy here on purpose - a where+orderBy combo needs a Firestore
+    // composite index. Sorting the (small) result set client-side avoids that.
+    const q = query(collection(db, "orders"), where("clientUid", "==", user.uid));
+    const unsub = onSnapshot(
+      q,
+      (snap) => {
+        const orders = snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Order);
+        orders.sort(
+          (a, b) => (b.createdAt?.toMillis() ?? 0) - (a.createdAt?.toMillis() ?? 0)
+        );
+        setOrder(orders[0] ?? null);
+        setOrdersLoading(false);
+      },
+      (err) => {
+        setLoadError(err.message);
+        setOrdersLoading(false);
+      }
     );
-    const unsub = onSnapshot(q, (snap) => {
-      const first = snap.docs[0];
-      setOrder(first ? ({ id: first.id, ...first.data() } as Order) : null);
-      setOrdersLoading(false);
-    });
     return unsub;
   }, [loading, user, router]);
 
   if (loading || ordersLoading) {
     return <div className="mx-auto max-w-2xl px-6 py-16 text-sm text-body">Loading…</div>;
+  }
+
+  if (loadError) {
+    return (
+      <div className="mx-auto max-w-2xl px-6 py-16 text-sm text-accent-text">
+        Couldn&apos;t load your order: {loadError}
+      </div>
+    );
   }
 
   if (!order) {

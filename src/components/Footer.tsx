@@ -12,9 +12,6 @@ export default function Footer() {
           <Link href="/terms" className="hover:text-headline">
             Terms
           </Link>
-          <Link href="/login" className="hover:text-headline">
-            Log in
-          </Link>
         </div>
       </div>
     </footer>

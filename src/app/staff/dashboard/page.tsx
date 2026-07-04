@@ -13,6 +13,7 @@ export default function StaffDashboardPage() {
   const { user, profile, loading } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     if (loading) return;
@@ -28,15 +29,30 @@ export default function StaffDashboardPage() {
 
     const db = getFirebaseDb();
     const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
-    const unsub = onSnapshot(q, (snap) => {
-      setOrders(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Order));
-      setOrdersLoading(false);
-    });
+    const unsub = onSnapshot(
+      q,
+      (snap) => {
+        setOrders(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Order));
+        setOrdersLoading(false);
+      },
+      (err) => {
+        setLoadError(err.message);
+        setOrdersLoading(false);
+      }
+    );
     return unsub;
   }, [loading, user, profile, router]);
 
   if (loading || !profile || profile.role !== "staff" || ordersLoading) {
     return <div className="mx-auto max-w-6xl px-6 py-16 text-sm text-body">Loading…</div>;
+  }
+
+  if (loadError) {
+    return (
+      <div className="mx-auto max-w-6xl px-6 py-16 text-sm text-accent-text">
+        Couldn&apos;t load orders: {loadError}
+      </div>
+    );
   }
 
   return (
