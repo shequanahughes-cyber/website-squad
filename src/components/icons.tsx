@@ -2,6 +2,22 @@ type IconProps = { className?: string };
 
 const base = "1.6";
 
+export function ChevronLeftIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={base} className={className}>
+      <path d="M15 5 8 12l7 7" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function ChevronRightIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={base} className={className}>
+      <path d="m9 5 7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 // fill 0-1 controls how much of the star is filled (for half-star ratings).
 export function StarIcon({ className, fill = 1 }: IconProps & { fill?: number }) {
   const id = `star-fill-${Math.round(fill * 100)}`;

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Checklist from "@/components/Checklist";
 import TrustBand from "@/components/TrustBand";
+import PortfolioCarousel from "@/components/PortfolioCarousel";
 import { TIERS } from "@/lib/offer";
 
 const STEPS = [
@@ -40,6 +41,13 @@ export default function Home() {
       <div className="mt-10">
         <TrustBand />
       </div>
+
+      <section className="mt-16">
+        <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.06em] text-headline">
+          Recent work
+        </p>
+        <PortfolioCarousel />
+      </section>
 
       <section className="mt-16">
         <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.06em] text-headline">
