@@ -86,6 +86,11 @@ export const MAINTENANCE_ADD_ON = {
 export const RATING = 4.5;
 export const TRUST_STATS = [
   { label: "Years in business", value: "10" },
-  { label: "In sales", value: "$1M+" },
   { label: "Clients served", value: "Hundreds" },
+] as const;
+
+export const CLIENT_QUOTES = [
+  "It's soooo GOOD!",
+  "I squealed!",
+  "I'm excited 🎉😊",
 ] as const;

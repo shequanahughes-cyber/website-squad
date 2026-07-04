@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Checklist from "@/components/Checklist";
 import TrustBand from "@/components/TrustBand";
+import QuoteStrip from "@/components/QuoteStrip";
 import PortfolioCarousel from "@/components/PortfolioCarousel";
 import { TIERS } from "@/lib/offer";
 
@@ -23,6 +24,11 @@ export default function Home() {
         A hand-designed multi-page site around your brand, built with
         AI-assisted development and reviewed by a human at every step.
       </p>
+
+      <div className="mt-6">
+        <QuoteStrip />
+      </div>
+
       <div className="mt-8 flex gap-3">
         <Link
           href="/order"
