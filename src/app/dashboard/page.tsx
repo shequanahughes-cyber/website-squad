@@ -6,6 +6,7 @@ import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { getFirebaseDb } from "@/lib/firebase";
 import { useAuth } from "@/lib/auth-context";
 import StatusTracker from "@/components/StatusTracker";
+import IntakeFormCard from "@/components/IntakeFormCard";
 import { ExternalLinkIcon, InfoIcon } from "@/components/icons";
 import { approveOrder, requestRevision, type Order } from "@/lib/orders";
 import { TIERS, type Tier } from "@/lib/offer";
@@ -241,7 +242,9 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {["order_placed", "intake_submitted", "in_progress"].includes(order.status) && (
+      {order.status === "order_placed" && <IntakeFormCard orderId={order.id} />}
+
+      {["intake_submitted", "in_progress"].includes(order.status) && (
         <div className="rounded-[14px] border border-border bg-surface p-6 text-[13px] text-body">
           We&apos;re on it — standard delivery is 7 to 10 business days from
           your completed intake form. We&apos;ll notify you here as soon as

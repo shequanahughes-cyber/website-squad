@@ -159,7 +159,7 @@ export default function IntakeFileUpload({ orderId }: { orderId: string }) {
             ? "cursor-not-allowed border-border bg-panel opacity-60"
             : dragActive
               ? "border-accent bg-accent-tint"
-              : "border-border bg-surface"
+              : "border-border bg-background"
         }`}
       >
         <UploadCloudIcon className="h-6 w-6 text-accent-text" />
@@ -188,7 +188,7 @@ export default function IntakeFileUpload({ orderId }: { orderId: string }) {
           {items.map((item) => (
             <div
               key={item.id}
-              className="flex items-center gap-3 rounded-lg border border-border bg-surface px-3 py-2"
+              className="flex items-center gap-3 rounded-lg border border-border bg-background px-3 py-2"
             >
               <FileIcon className="h-4 w-4 shrink-0 text-accent-text" />
               <div className="min-w-0 flex-1">
