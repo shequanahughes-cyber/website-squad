@@ -1,16 +1,43 @@
 "use client";
 
 import { useState } from "react";
-import { STATUS_STEPS, updateOrderByStaff, type Order, type OrderStatus } from "@/lib/orders";
+import {
+  STATUS_STEPS,
+  updateOrderByStaff,
+  type Order,
+  type OrderStatus,
+  type IntakeFormData,
+} from "@/lib/orders";
+import { FileIcon, ExternalLinkIcon } from "@/components/icons";
 
 const ALL_STATUSES: OrderStatus[] = [
   ...STATUS_STEPS.map((s) => s.status),
   "revision_requested",
 ];
 
+const INTAKE_TEXT_FIELDS: { key: keyof IntakeFormData; label: string }[] = [
+  { key: "businessName", label: "Business name" },
+  { key: "pagesWanted", label: "Pages wanted" },
+  { key: "brandStyle", label: "Brand style" },
+  { key: "contentReady", label: "Content ready" },
+  { key: "additionalNotes", label: "Additional notes" },
+];
+
+function formatSize(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 export default function StaffOrderRow({ order }: { order: Order }) {
   const [draftUrl, setDraftUrl] = useState(order.draftUrl ?? "");
   const [busy, setBusy] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+
+  const intake = order.intakeFormData;
+  const uploadedFiles = intake?.uploadedFiles ?? [];
+  const intakeEntries = INTAKE_TEXT_FIELDS.filter((f) => intake?.[f.key]);
+  const hasIntakeDetails = intakeEntries.length > 0 || uploadedFiles.length > 0;
 
   const draftUrlDirty = draftUrl !== (order.draftUrl ?? "");
 
@@ -42,9 +69,23 @@ export default function StaffOrderRow({ order }: { order: Order }) {
   }
 
   return (
+    <>
     <tr className="border-b border-border align-top">
       <td className="px-3 py-3 text-[13px] text-headline">{order.clientEmail}</td>
       <td className="px-3 py-3 text-[13px] text-body">{order.tier}</td>
+      <td className="px-3 py-3">
+        {hasIntakeDetails ? (
+          <button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            className="whitespace-nowrap rounded-lg border border-border bg-surface px-2.5 py-1.5 text-[12px] font-medium text-headline hover:bg-panel"
+          >
+            {expanded ? "Hide intake" : "View intake"}
+          </button>
+        ) : (
+          <span className="text-[12px] text-muted">—</span>
+        )}
+      </td>
       <td className="px-3 py-3 text-center">
         {order.maintenanceRequested && (
           <span className="whitespace-nowrap rounded-full bg-accent-tint px-2.5 py-1 text-[11px] font-medium text-accent-text">
@@ -97,5 +138,45 @@ export default function StaffOrderRow({ order }: { order: Order }) {
         />
       </td>
     </tr>
+    {expanded && hasIntakeDetails && (
+      <tr className="border-b border-border bg-panel/40">
+        <td colSpan={7} className="px-3 py-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {intakeEntries.map((f) => (
+              <div key={f.key}>
+                <p className="text-[11px] font-medium uppercase tracking-wide text-muted">
+                  {f.label}
+                </p>
+                <p className="text-[13px] text-headline">{intake?.[f.key] as string}</p>
+              </div>
+            ))}
+          </div>
+          {uploadedFiles.length > 0 && (
+            <div className="mt-3">
+              <p className="mb-1.5 text-[11px] font-medium uppercase tracking-wide text-muted">
+                Files
+              </p>
+              <div className="flex flex-col gap-1.5">
+                {uploadedFiles.map((file) => (
+                  <a
+                    key={file.url}
+                    href={file.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex w-fit items-center gap-2 rounded-lg border border-border bg-surface px-2.5 py-1.5 text-[12px] text-headline hover:bg-panel"
+                  >
+                    <FileIcon className="h-3.5 w-3.5 text-accent-text" />
+                    {file.name}
+                    <span className="text-muted">({formatSize(file.size)})</span>
+                    <ExternalLinkIcon className="h-3 w-3 text-muted" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </td>
+      </tr>
+    )}
+    </>
   );
 }

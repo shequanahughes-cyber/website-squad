@@ -21,6 +21,13 @@ service cloud.firestore {
           resource.data.revisionUsed == false);
     }
 
+    // Uploading intake files happens before the intake form is submitted,
+    // so status doesn't change yet - just stays on "order_placed".
+    function isIntakeFileUpload() {
+      return resource.data.status == "order_placed" &&
+        request.resource.data.status == "order_placed";
+    }
+
     match /users/{userId} {
       allow read: if isSignedIn() && (request.auth.uid == userId || isStaff());
       // Self-registration always creates role: "client" - staff accounts are
@@ -42,7 +49,7 @@ service cloud.firestore {
       allow update: if (isSignedIn() && resource.data.clientUid == request.auth.uid &&
           request.resource.data.diff(resource.data).affectedKeys()
             .hasOnly(["status", "revisionUsed", "revisionNotes", "approvedAt", "updatedAt", "intakeFormData"]) &&
-          validClientStatusTransition()) ||
+          (validClientStatusTransition() || isIntakeFileUpload())) ||
         isStaff();
     }
   }

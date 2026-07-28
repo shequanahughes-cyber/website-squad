@@ -1,6 +1,7 @@
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
 import { getAuth, type Auth } from "firebase/auth";
 import { getFirestore, type Firestore } from "firebase/firestore";
+import { getStorage, type FirebaseStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -14,6 +15,7 @@ const firebaseConfig = {
 let app: FirebaseApp | undefined;
 let authInstance: Auth | undefined;
 let dbInstance: Firestore | undefined;
+let storageInstance: FirebaseStorage | undefined;
 
 // Firebase must never initialize during Next.js server-side rendering/prerendering.
 // Callers must only invoke these from useEffect hooks or client event handlers.
@@ -35,4 +37,9 @@ export function getFirebaseAuth(): Auth {
 export function getFirebaseDb(): Firestore {
   if (!dbInstance) dbInstance = getFirestore(getFirebaseApp());
   return dbInstance;
+}
+
+export function getFirebaseStorage(): FirebaseStorage {
+  if (!storageInstance) storageInstance = getStorage(getFirebaseApp());
+  return storageInstance;
 }

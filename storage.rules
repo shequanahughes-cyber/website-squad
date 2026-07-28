@@ -1,0 +1,36 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /orders/{orderId}/uploads/{fileName} {
+
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner() {
+        return isSignedIn() &&
+          firestore.get(/databases/(default)/documents/orders/$(orderId)).data.clientUid
+            == request.auth.uid;
+      }
+
+      function isStaff() {
+        return isSignedIn() &&
+          firestore.exists(/databases/(default)/documents/users/$(request.auth.uid)) &&
+          firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role
+            == "staff";
+      }
+
+      function isValidUpload() {
+        return request.resource.size < 10 * 1024 * 1024 &&
+          (request.resource.contentType.matches('image/.*') ||
+            request.resource.contentType == 'application/pdf' ||
+            request.resource.contentType ==
+              'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+      }
+
+      allow read: if isOwner() || isStaff();
+      allow create: if (isOwner() || isStaff()) && isValidUpload();
+      allow delete: if isOwner() || isStaff();
+    }
+  }
+}

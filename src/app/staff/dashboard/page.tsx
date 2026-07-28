@@ -66,6 +66,7 @@ export default function StaffDashboardPage() {
             <tr className="border-b border-border text-left text-[11px] uppercase tracking-wide text-muted">
               <th className="px-3 py-3 font-medium">Client</th>
               <th className="px-3 py-3 font-medium">Tier</th>
+              <th className="px-3 py-3 font-medium">Intake</th>
               <th className="px-3 py-3 font-medium">Maintenance</th>
               <th className="px-3 py-3 font-medium">Status</th>
               <th className="px-3 py-3 font-medium">Draft URL</th>
@@ -75,7 +76,7 @@ export default function StaffDashboardPage() {
           <tbody>
             {orders.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-3 py-6 text-center text-[13px] text-muted">
+                <td colSpan={7} className="px-3 py-6 text-center text-[13px] text-muted">
                   No orders yet.
                 </td>
               </tr>

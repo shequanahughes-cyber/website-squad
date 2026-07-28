@@ -7,6 +7,7 @@ import { createOrder, submitIntake } from "@/lib/orders";
 import { TIERS, type Tier } from "@/lib/offer";
 import { TERMS_VERSION } from "@/lib/terms";
 import { syncToGhl } from "@/lib/ghl";
+import IntakeFileUpload from "@/components/IntakeFileUpload";
 
 const PENDING_ORDER_KEY = "wds_pending_order";
 const ACTIVE_ORDER_KEY = "wds_active_order_id";
@@ -160,6 +161,7 @@ export default function IntakeForm() {
             />
           </div>
         ))}
+        {orderId && <IntakeFileUpload orderId={orderId} />}
         {error && <p className="text-[12px] text-accent-text">{error}</p>}
         <button
           type="submit"

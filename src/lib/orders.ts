@@ -1,5 +1,7 @@
 import {
   addDoc,
+  arrayRemove,
+  arrayUnion,
   collection,
   doc,
   serverTimestamp,
@@ -18,6 +20,22 @@ export type OrderStatus =
   | "approved"
   | "delivered";
 
+export type UploadedFile = {
+  name: string;
+  url: string;
+  size: number;
+  uploadedAt: string;
+};
+
+export type IntakeFormData = {
+  businessName?: string;
+  pagesWanted?: string;
+  brandStyle?: string;
+  contentReady?: string;
+  additionalNotes?: string;
+  uploadedFiles?: UploadedFile[];
+};
+
 export type Order = {
   id: string;
   clientUid: string;
@@ -27,7 +45,7 @@ export type Order = {
   status: OrderStatus;
   termsAcceptedAt: Timestamp | null;
   termsVersion: string;
-  intakeFormData: Record<string, string> | null;
+  intakeFormData: IntakeFormData | null;
   draftUrl: string | null;
   revisionUsed: boolean;
   revisionNotes: string | null;
@@ -92,9 +110,31 @@ export async function submitIntake(
   intakeFormData: Record<string, string>
 ) {
   const db = getFirebaseDb();
-  await updateDoc(doc(db, "orders", orderId), {
+  // Set each text field via its own dot-path instead of replacing the whole
+  // intakeFormData map - a plain replace would wipe out any uploadedFiles
+  // already written there by file uploads made before this submit.
+  const updates: Record<string, unknown> = {
     status: "intake_submitted" satisfies OrderStatus,
-    intakeFormData,
+    updatedAt: serverTimestamp(),
+  };
+  for (const [key, value] of Object.entries(intakeFormData)) {
+    updates[`intakeFormData.${key}`] = value;
+  }
+  await updateDoc(doc(db, "orders", orderId), updates);
+}
+
+export async function addUploadedFile(orderId: string, file: UploadedFile) {
+  const db = getFirebaseDb();
+  await updateDoc(doc(db, "orders", orderId), {
+    "intakeFormData.uploadedFiles": arrayUnion(file),
+    updatedAt: serverTimestamp(),
+  });
+}
+
+export async function removeUploadedFile(orderId: string, file: UploadedFile) {
+  const db = getFirebaseDb();
+  await updateDoc(doc(db, "orders", orderId), {
+    "intakeFormData.uploadedFiles": arrayRemove(file),
     updatedAt: serverTimestamp(),
   });
 }
